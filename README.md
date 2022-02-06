@@ -10,15 +10,14 @@ simply clone this repo
 ```sh
 git clone https://github.com/MOo207/warehouse_management.git
 ```
+then install dependencies
+```sh
+flutter pub get
+```
 
 make sure all tests run smoothly
 ```sh
 flutter test
-```
-
-then install dependencies
-```sh
-flutter pub get
 ```
 
 you are  ready now to run the project 
