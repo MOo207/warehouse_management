@@ -1,84 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
+import 'package:warehouse_management/extensions/index_by_id_extension.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
+import 'package:warehouse_management/services/item_service.dart';
 
 class ItemProvider with ChangeNotifier {
-  final String _itemsBox = 'items';
+  ItemService itemService = ItemService();
 
   List _itemsList = <Item>[];
 
   List get itemList => _itemsList;
 
-  indexFromId(int id) {
-    return _itemsList.indexWhere((item) => item.id == id);
-  }
-
-  getItemById(int id) {
-    return _itemsList.firstWhere((item) => item.id == id);
-  }
-
   addOrUpdateItem(Item item) async {
-    var box = await Hive.openBox<Item>(_itemsBox);
+    List<Item> items = await itemService.getItems();
 
-    final Map itemsMap = box.toMap();
+    final Map itemsMap = items.asMap();
     int exist = -1;
     itemsMap.forEach((key, value) {
       if (value.id == item.id) exist = item.id!;
     });
 
     if (exist == -1) {
-      addItem(item);
+      itemService.addItem(item);
+      notifyListeners();
       await showToastMessage("New Item added!");
     } else {
-      int index = indexFromId(item.id!);
-      updateItem(item, index);
+      int index = _itemsList.getIndexById(item.id!);
+      await itemService.updateItem(index, item);
+      notifyListeners();
       await showToastMessage("Item at index $index has been Updated!");
     }
   }
 
-  Future<List<Item>> OnQueryChangedCallback(String query){
-    if (query.isEmpty) {
-      return Future.value(_itemsList as List<Item>);      
-    } else {
-    _itemsList = _itemsList.where((item) => item.name.toLowerCase().contains(query.toLowerCase())).toList();
-    return Future.value(_itemsList as List<Item>);
-    }
-  }
-
   addItem(Item item) async {
-    var box = await Hive.openBox<Item>(_itemsBox);
-    
-    box.add(item);
-
+    itemService.addItem(item);
     notifyListeners();
   }
 
-  updateItem(Item item, int index) async {
-    var box = await Hive.openBox<Item>(_itemsBox);
-
-    box.putAt(index, item);
-
+  updateItem(int index, Item item) async {
+    itemService.updateItem(index, item);
     notifyListeners();
   }
 
   getItems() async {
-    final box = await Hive.openBox<Item>(_itemsBox);
-
-    _itemsList = box.values.toList();
-
+    _itemsList = await itemService.getItems();
     notifyListeners();
   }
 
   deleteItem(int index) {
-    final box = Hive.box<Item>(_itemsBox);
-
-    box.deleteAt(index);
-
+    itemService.deleteItem(index);
     getItems();
-
-    notifyListeners();
-    
   }
 }

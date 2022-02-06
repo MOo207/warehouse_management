@@ -1,51 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
+import 'package:warehouse_management/services/transaction_service.dart';
 
 class TransactionProvider with ChangeNotifier {
-  final String _transactionsBox = 'transactions';
+  TransactionService transactionService = TransactionService();
 
   List _transactionsList = <Transaction>[];
 
   List get transactionList => _transactionsList;
 
-
-
-  indexFromId(int id) {
-    return _transactionsList.indexWhere((transaction) => transaction.id == id);
-  }
-
-   getTransactions() async {
-    final box = await Hive.openBox<Transaction>(_transactionsBox);
-
-    _transactionsList = box.values.toList();
-
+  getTransactions() async {
+    final list = await transactionService.getTransactions();
+    _transactionsList = list;
     notifyListeners();
   }
 
-  updateTransaction(int index, Transaction transaction) {
-    final box = Hive.box<Transaction>(_transactionsBox);
-
-    box.putAt(index, transaction);
-
+  updateTransaction(int index, Transaction transaction) async {
+    await transactionService.updateTransaction(index, transaction);
     notifyListeners();
   }
 
-  deleteTransaction(int index) {
-    final box = Hive.box<Transaction>(_transactionsBox);
+  deleteTransaction(int index) async {
+    await transactionService.deleteTransaction(index);
 
-    box.deleteAt(index);
-
-    getTransactions();
+    _transactionsList = await transactionService.getTransactions();
 
     notifyListeners();
   }
 
   List<int> _filters = <int>[];
-   void setFilters(List<int> newFilters){
-      _filters = newFilters;
-      notifyListeners();
-   }
+  void setFilters(List<int> newFilters) {
+    _filters = newFilters;
+    notifyListeners();
+  }
+
   List<int> get filters => _filters;
 
   List<Transaction> _transactionsSearchResult = <Transaction>[];
@@ -82,10 +70,7 @@ class TransactionProvider with ChangeNotifier {
   }
 
   addTransaction(Transaction transaction) async {
-    var box = await Hive.openBox<Transaction>(_transactionsBox);
-
-    box.add(transaction);
-
+    await transactionService.addTransaction(transaction);
     notifyListeners();
   }
 
@@ -94,10 +79,11 @@ class TransactionProvider with ChangeNotifier {
   List<Transaction> get transactionsFilters => _transactionsFilters;
 
   getTransactionsWithFilters(List<int> filters) async {
-    final box = await Hive.openBox<Transaction>(_transactionsBox);
+    final box = await transactionService.getTransactions();
+    _transactionsList = box;
 
     if (filters.isNotEmpty) {
-      _transactionsFilters = box.values.toList();
+      _transactionsFilters = box;
 
       switch (filters[0]) {
         case 0:
@@ -105,23 +91,21 @@ class TransactionProvider with ChangeNotifier {
               .sort((a, b) => a.quantity!.compareTo(b.quantity!));
           break;
         case 1:
-         _transactionsFilters
+          _transactionsFilters
               .sort((b, a) => a.quantity!.compareTo(b.quantity!));
           break;
         case 2:
-        _transactionsFilters
-              .sort((a, b) => a.type!.compareTo(b.type!));
+          _transactionsFilters.sort((a, b) => a.type!.compareTo(b.type!));
           break;
         case 3:
-        _transactionsFilters
-              .sort((b, a) => a.type!.compareTo(b.type!));
+          _transactionsFilters.sort((b, a) => a.type!.compareTo(b.type!));
           break;
         case 4:
-         _transactionsFilters
+          _transactionsFilters
               .sort((a, b) => a.inbound_at!.compareTo(b.inbound_at!));
           break;
         case 5:
-        _transactionsFilters
+          _transactionsFilters
               .sort((a, b) => a.outbound_at!.compareTo(b.outbound_at!));
           break;
         default:
@@ -129,12 +113,10 @@ class TransactionProvider with ChangeNotifier {
 
       notifyListeners();
     } else {
-      _transactionsFilters = box.values.toList();
+      _transactionsFilters = box;
       notifyListeners();
     }
   }
-
- 
 
   // addOrUpdateTransaction(Transaction transaction) async {
 //     var box = await Hive.openBox<Transaction>(_transactionsBox);

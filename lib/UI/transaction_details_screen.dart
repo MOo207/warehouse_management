@@ -17,7 +17,6 @@ class TransactionDetailsScreen extends StatelessWidget {
         title: const Text('Transaction Details'),
       ),
       body: Container(
-        
         height: height * 0.5,
         margin: const EdgeInsets.all(18),
         child: Card(

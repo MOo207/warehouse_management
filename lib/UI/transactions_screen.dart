@@ -6,6 +6,7 @@ import 'package:warehouse_management/UI/widgets/custom_fab_widget.dart';
 import 'package:warehouse_management/UI/widgets/filters_dialog.dart';
 import 'package:warehouse_management/UI/widgets/in_out_bound_dialog.dart';
 import 'package:warehouse_management/UI/widgets/transaction_card_widget.dart';
+import 'package:warehouse_management/extensions/get_item_by_id.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
@@ -23,14 +24,18 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
-    TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context);
+    TransactionProvider transactionProvider =
+        Provider.of<TransactionProvider>(context);
+    ItemProvider itemProvider = Provider.of<ItemProvider>(context);
     context.watch<TransactionProvider>().getTransactions();
 
     context.watch<ItemProvider>().getItems();
 
     final controller = FloatingSearchBarController();
 
-    context.watch<TransactionProvider>().getTransactionsWithFilters(transactionProvider.filters);
+    context
+        .watch<TransactionProvider>()
+        .getTransactionsWithFilters(transactionProvider.filters);
 
     @override
     void dispose() {
@@ -41,43 +46,64 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
 
     buildResultList(transactions) {
-    return transactionProvider.filters.isEmpty? ListView.builder(
-      itemCount: transactions.transactionList.length,
-      itemBuilder: (context, index) {
-        int itemId = transactions.transactionList[index].itemId;
-        Item item = Provider.of<ItemProvider>(context, listen: false)
-            .getItemById(itemId);
-        return InkWell(
-          onTap: () => Navigator.pushNamed(context, '/transactionDetails',
-              arguments: TransactionsDetailsArgument(
-                  transactions.transactionList[index], item)),
-          child: TransactionCardWidget(
-            transaction: transactions.transactionList[index],
-            item: item,
-            index: index,
-          ),
-        );
-      },
-    ) : ListView.builder(
-      itemCount: transactions.transactionsFilters.length,
-      itemBuilder: (context, index) {
-        int itemId = transactions.transactionsFilters[index].itemId;
-        Item item = Provider.of<ItemProvider>(context, listen: false)
-            .getItemById(itemId);
-        return InkWell(
-          onTap: () => Navigator.pushNamed(context, '/transactionDetails',
-              arguments: TransactionsDetailsArgument(
-                  transactions.transactionsFilters[index], item)),
-          child: TransactionCardWidget(
-            transaction: transactions.transactionsFilters[index],
-            item: item,
-            index: index,
-          ),
-        );
-      },
-    ) ;
-  }
+      return transactionProvider.filters.isEmpty
+          ? ListView.builder(
+              itemCount: transactions.transactionList.length,
+              itemBuilder: (context, index) {
+                int itemId = transactions.transactionList[index].itemId;
+                Item item = itemProvider.itemList.getItemById(itemId);
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(
+                      context, '/transactionDetails',
+                      arguments: TransactionsDetailsArgument(
+                          transactions.transactionList[index], item)),
+                  child: TransactionCardWidget(
+                    transaction: transactions.transactionList[index],
+                    item: item,
+                    index: index,
+                  ),
+                );
+              },
+            )
+          : ListView.builder(
+              itemCount: transactions.transactionsFilters.length,
+              itemBuilder: (context, index) {
+                int itemId = transactions.transactionsFilters[index].itemId;
+                Item item = itemProvider.itemList.getItemById(itemId);
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(
+                      context, '/transactionDetails',
+                      arguments: TransactionsDetailsArgument(
+                          transactions.transactionsFilters[index], item)),
+                  child: TransactionCardWidget(
+                    transaction: transactions.transactionsFilters[index],
+                    item: item,
+                    index: index,
+                  ),
+                );
+              },
+            );
+    }
 
+    buildSearchList(List<Transaction> transactions) {
+      return ListView.builder(
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          int? itemId = transactions[index].itemId;
+          Item item = itemProvider.itemList.getItemById(itemId!);
+          return InkWell(
+            onTap: () => Navigator.pushNamed(context, '/transactionDetails',
+                arguments:
+                    TransactionsDetailsArgument(transactions[index], item)),
+            child: TransactionCardWidget(
+              transaction: transactions[index],
+              item: item,
+              index: index,
+            ),
+          );
+        },
+      );
+    }
 
     Widget buildSearchBar() {
       final actions = [
@@ -171,27 +197,5 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         body: buildSearchBar(),
       );
     });
-  }
-
-  
-  buildSearchList(List<Transaction> transactions) {
-    return ListView.builder(
-      itemCount: transactions.length,
-      itemBuilder: (context, index) {
-        int? itemId = transactions[index].itemId;
-        Item item = Provider.of<ItemProvider>(context, listen: false)
-            .getItemById(itemId!);
-        return InkWell(
-          onTap: () => Navigator.pushNamed(context, '/transactionDetails',
-              arguments:
-                  TransactionsDetailsArgument(transactions[index], item)),
-          child: TransactionCardWidget(
-            transaction: transactions[index],
-            item: item,
-            index: index,
-          ),
-        );
-      },
-    );
   }
 }

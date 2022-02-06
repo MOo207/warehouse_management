@@ -4,6 +4,7 @@ import 'package:warehouse_management/UI/transaction_details_screen.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
+import 'package:warehouse_management/providers/transaction_provider.dart';
 
 
 class SearchWidget extends SearchDelegate<Transaction> {
@@ -46,10 +47,10 @@ class SearchFinder extends StatelessWidget {
   const SearchFinder({Key? key, this.query}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    context.watch<ItemProvider>().getItems();
-    ItemProvider databaseProvider = Provider.of<ItemProvider>(context);
-    return FutureBuilder<List<Item>>(
-      future: databaseProvider.OnQueryChangedCallback(query!),
+    context.watch<TransactionProvider>().getTransactions();
+    TransactionProvider databaseProvider = Provider.of<TransactionProvider>(context);
+    return FutureBuilder<List<Transaction>>(
+      future: databaseProvider.searchTransaction(query!),
       builder: (context, snapshot) {
         ///* this is where we filter data
 
@@ -67,16 +68,10 @@ class SearchFinder extends StatelessWidget {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   // passing as a custom list
-                  final Item contactListItem = snapshot.data![index];
+                  final Transaction contactListItem = snapshot.data![index] as Transaction;
 
                   return ListTile(
                     onTap: () {
-                      ///* This is where we update index so that we could go to that screen
-                      // var selectedContactIndex =
-                      //     Provider.of<ItemProvider>(context, listen: false).transactionList
-                      //         .indexOf(results[index]);
-                      // databaseProvider
-                      //     .updateTransaction(selectedContactIndex, );
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -86,7 +81,7 @@ class SearchFinder extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          contactListItem.name.toString(),
+                          contactListItem.quantity.toString(),
                         ),
                         const SizedBox(height: 4.0),
                         Text(

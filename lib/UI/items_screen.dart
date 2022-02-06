@@ -33,15 +33,19 @@ class ItemsScreen extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              child: items.itemList.isEmpty? const Center(child: Text("No Items"),) : ListView.builder(
-                itemCount: items.itemList.length,
-                itemBuilder: (context, index) {
-                  return ItemCardWidget(
-                    item: items.itemList[index],
-                    index: index,
-                  );
-                },
-              ),
+              child: items.itemList.isEmpty
+                  ? const Center(
+                      child: Text("No Items"),
+                    )
+                  : ListView.builder(
+                      itemCount: items.itemList.length,
+                      itemBuilder: (context, index) {
+                        return ItemCardWidget(
+                          item: items.itemList[index],
+                          index: index,
+                        );
+                      },
+                    ),
             ),
           ],
         ),

@@ -1,25 +1,17 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/argument/transaction_details_args.dart';
-import 'package:warehouse_management/models/items/item_model.dart';
-import 'package:warehouse_management/models/transactions/transaction_model.dart';
 
 import 'package:warehouse_management/UI/transactions_screen.dart';
 import 'package:warehouse_management/UI/items_screen.dart';
 import 'package:warehouse_management/UI/transaction_details_screen.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
+import 'package:warehouse_management/services/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Directory directory = await path_provider.getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
-  Hive.registerAdapter(ItemAdapter());
-  Hive.registerAdapter(TransactionAdapter());
+  await HiveService().initHive();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<ItemProvider>(
       create: (context) => ItemProvider(),

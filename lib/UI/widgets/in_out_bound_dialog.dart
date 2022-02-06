@@ -142,7 +142,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                   inbound_at: inboundDate,
                   outbound_at: outboundDate,
                   itemId: itemId,
-                  quantity: int.parse(quantityController.text),
+                  quantity: quantityController.text.isNotEmpty  ? int.parse(quantityController.text) : 0,
                 );
                 Navigator.pop(context);
                 transactionProvider.addTransaction(addedTransaction);
