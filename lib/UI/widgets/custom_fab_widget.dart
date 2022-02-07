@@ -18,7 +18,7 @@ class CustomFABWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width ?? MediaQuery.of(context).size.width * 0.45,
       child: FloatingActionButton.extended(
         heroTag: heroTag,

@@ -7,7 +7,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
-import 'package:warehouse_management/extensions/get_item_by_id.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/services/hive_service.dart';
@@ -117,6 +116,19 @@ void main() {
       List<Transaction> transactionList =
           await transactionService.getTransactions();
       expect(transactionList, isNotNull);
+    });
+    test("Search for transaction success", () async {
+      List<Transaction> transactionList =
+          await transactionService.getTransactions();
+      List<dynamic> resultTransaction = transactionService.searchForTransaction(dummyTransaction.type, transactionList);
+      expect(resultTransaction.length, 1);
+      expect(resultTransaction[0].type, dummyTransaction.type);
+    });
+    test("Search for transaction fail", () async {
+      List<Transaction> transactionList =
+          await transactionService.getTransactions();
+      List<dynamic> resultTransaction = transactionService.searchForTransaction("outbound", transactionList);
+      expect(resultTransaction.length, 0);
     });
 
     test("Delete transaction", () async {

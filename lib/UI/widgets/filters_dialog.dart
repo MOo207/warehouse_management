@@ -26,7 +26,7 @@ Future filtersDialog(context) async {
           title: const Center(child: Text("Filters Dialog")),
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-            return Container(
+            return SizedBox(
               height: 350,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -53,7 +53,7 @@ Future filtersDialog(context) async {
                   setState(() {
                    
                   });
-                 }, icon: Icon(Icons.clear))
+                 }, icon: const Icon(Icons.clear))
                 ],
               ),
             );

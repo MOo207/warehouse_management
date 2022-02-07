@@ -11,8 +11,8 @@ class CustomDropDown extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<CustomDropDown> {
-  GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
   TextEditingController? _controller;
+
   //String _initialValue;
   String _valueChanged = '';
   String _valueToValidate = '';
@@ -34,7 +34,11 @@ class _CustomDropDownState extends State<CustomDropDown> {
   /// from a data base sqlite or from a API
   void _getValue() {
     //_initialValue = 'circleValue';
-    _controller?.text = widget.items!.first['label'];
+    if (widget.items!.isNotEmpty){
+    _controller?.text = widget.items!.first['label'] ;
+    } else {
+      _controller?.text = 'No Items';
+    }
   }
 
   @override
@@ -57,7 +61,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
         return null;
       },
       onSaved: (val) {
-        print(val);
+       
        setState(() => _valueSaved = val ?? '');
       }
     );

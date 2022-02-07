@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/transaction_details_screen.dart';
-import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
-import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
 
 
@@ -50,7 +48,7 @@ class SearchFinder extends StatelessWidget {
     context.watch<TransactionProvider>().getTransactions();
     TransactionProvider databaseProvider = Provider.of<TransactionProvider>(context);
     return FutureBuilder<List<Transaction>>(
-      future: databaseProvider.searchTransaction(query!),
+      future: databaseProvider.searchForTransaction(query!),
       builder: (context, snapshot) {
         ///* this is where we filter data
 
@@ -68,7 +66,7 @@ class SearchFinder extends StatelessWidget {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   // passing as a custom list
-                  final Transaction contactListItem = snapshot.data![index] as Transaction;
+                  final Transaction contactListItem = snapshot.data![index];
 
                   return ListTile(
                     onTap: () {

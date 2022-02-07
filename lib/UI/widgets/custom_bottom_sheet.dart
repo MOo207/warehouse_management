@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_management/UI/widgets/custom_add_item_dialog.dart';
-import 'package:warehouse_management/UI/widgets/qr_scanner.dart';
+import 'package:warehouse_management/UI/widgets/qr_scanner_widget.dart';
 
 openModalBottomSheet(BuildContext context) async {
   await showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
-        borderRadius: const BorderRadius.vertical(
-          top: const Radius.circular(20),
+        borderRadius:  BorderRadius.vertical(
+          top:  Radius.circular(20),
         ),
       ),
       clipBehavior: Clip.antiAliasWithSaveLayer,

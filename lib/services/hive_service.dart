@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:test/test.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 
@@ -27,6 +26,7 @@ class HiveService {
 
   Future<Box<T>> openBox<T>(String boxName) async {
     final box = await Hive.openBox<T>(boxName);
+    // await box.clear();
     return box;
   }
 

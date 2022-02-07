@@ -47,6 +47,14 @@ Future showInOutBoundForm(context, bool isInBound) async {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.isNotEmpty && int.tryParse(value) == null) {
+                          return "Please enter a valid ID";
+                        } else {
+                          return null;
+                        }
+                      },
                       keyboardType: TextInputType.number,
                       controller: idController,
                       autofocus: true,
@@ -61,6 +69,17 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       textAlign: TextAlign.center,
                     ),
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: ((value) {
+                        if (value!.isEmpty){
+                          return "Please enter a Quantity";
+                        }
+                         else if (value.isNotEmpty && int.tryParse(value) == null) {
+                          return "Please enter a valid Quantity";
+                        } else {
+                          return null;
+                        }
+                      }),
                       keyboardType: TextInputType.number,
                       controller: quantityController,
                       autofocus: true,
@@ -78,7 +97,6 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       items: itemsToPass,
                       onChange: (changed) => setState(() {
                         itemId = int.parse(changed);
-                        print("----------" + itemId.toString());
                       }),
                     ),
                     TextFormField(
@@ -104,10 +122,12 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         inboundDate = DateTime.tryParse(val)!;
                       }),
                       validator: (val) {
-                        print(val);
-                        return null;
+                        if(val!.isEmpty){
+                          return "Please enter a Inbound Date";
+                        } else {
+                          return null;
+                        }
                       },
-                      onSaved: (val) => print("object"),
                     ),
                     DateTimePicker(
                       initialValue: '',
@@ -119,10 +139,12 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         outboundDate = DateTime.tryParse(val)!;
                       }),
                       validator: (val) {
-                        print(val);
-                        return null;
+                        if (val!.isEmpty) {
+                          return "Please enter a Outbound Date";
+                        } else {
+                          return null;
+                        }
                       },
-                      onSaved: (val) => print("object"),
                     ),
                   ],
                 ),
@@ -131,21 +153,32 @@ Future showInOutBoundForm(context, bool isInBound) async {
           }),
           actions: <Widget>[
             ElevatedButton(
-              onPressed: () {
-                int generated = DateTime.now().millisecondsSinceEpoch;
-                Transaction addedTransaction = Transaction(
-                  // id: int.parse(idController.text),
-                  id: idController.text.isEmpty
-                      ? generated
-                      : int.parse(idController.text),
-                  type: bound,
-                  inbound_at: inboundDate,
-                  outbound_at: outboundDate,
-                  itemId: itemId,
-                  quantity: quantityController.text.isNotEmpty  ? int.parse(quantityController.text) : 0,
-                );
-                Navigator.pop(context);
-                transactionProvider.addTransaction(addedTransaction);
+              onPressed: () async {
+                if (quantityController.text.isEmpty || itemId == null) {
+                  await showToastMessage(
+                      "Please fill all the fields and check the date");
+                } else if (inboundDate.isAfter(outboundDate)) {
+                  await showToastMessage(
+                      "inbound date should be before outbound date");
+                } else {
+                  int generated = DateTime.now().millisecondsSinceEpoch;
+                  Transaction addedTransaction = Transaction(
+                    // id: int.parse(idController.text),
+                    id: idController.text.isEmpty
+                        ? generated
+                        : int.parse(idController.text),
+                    type: bound,
+                    inbound_at: inboundDate,
+                    outbound_at: outboundDate,
+                    itemId: itemId,
+                    quantity: quantityController.text.isNotEmpty
+                        ? int.parse(quantityController.text)
+                        : 0,
+                  );
+                  Navigator.pop(context);
+                  transactionProvider.addTransaction(addedTransaction);
+                  await showToastMessage("Transaction added successfully");
+                }
               },
               child: const Text('Save'),
             ),

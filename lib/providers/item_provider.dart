@@ -48,7 +48,14 @@ class ItemProvider with ChangeNotifier {
   }
 
   deleteItem(int index) {
+    itemList.removeAt(index);
     itemService.deleteItem(index);
-    getItems();
+    notifyListeners();
+  }
+
+  deleteItemWithItsTransactions(int index) async {
+    itemList.removeAt(index);
+    await itemService.deleteItemWithItsTransactions(index);
+    notifyListeners();
   }
 }

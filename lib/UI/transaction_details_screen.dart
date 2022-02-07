@@ -134,8 +134,8 @@ class TransactionDetailsScreen extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text("Inbounded"),
+                  children: const [
+                    Text("Inbounded"),
                   ],
                 ),
                 Row(
@@ -160,7 +160,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                     ),
                     const Text(
                       "Time",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w300,
                       ),
                     ),
@@ -172,8 +172,8 @@ class TransactionDetailsScreen extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text("Outbounded"),
+                  children: const [
+                    Text("Outbounded"),
                   ],
                 ),
                 Row(

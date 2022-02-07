@@ -34,6 +34,7 @@ class TransactionService {
     try {
       final box = await openTransactionsBox();
       box.putAt(index, transaction);
+
       return true;
     } catch (e) {
       return false;
@@ -50,32 +51,51 @@ class TransactionService {
     }
   }
 
+  searchForTransaction(String? query, List<Transaction> searchList) {
+    if (int.tryParse(query!) != null) {
+      return searchList.where((transaction) {
+        transaction;
+        return transaction.quantity.toString().contains(query);
+      }).toList();
+    } else if (DateTime.tryParse(query) != null) {
+      return searchList
+          .where((transaction) =>
+              transaction.inbound_at!.toString().contains(query))
+          .toList();
+    } else {
+      return searchList.where((transaction) {
+        transaction;
+        return transaction.type!.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+  }
+
   // List<int> _filters = <int>[];
   // void setFilters(List<int> newFilters) {
   //   _filters = newFilters;
   // }
 
-  // searchTransaction(String? query) {
+  // searchForTransaction(String? query) {
   //   if (query!.isEmpty) {
   //     getTransactions();
-  //     _transactionsSearchResult = _transactionsList as List<Transaction>;
+  //     _transactionsSearchResult = searchList as List<Transaction>;
   //     return _transactionsSearchResult;
   //   } else {
   //     if (int.tryParse(query) != null) {
-  //       _transactionsSearchResult = _transactionsList.where((transaction) {
+  //       _transactionsSearchResult = searchList.where((transaction) {
   //         transaction as Transaction;
   //         return transaction.quantity.toString().contains(query);
   //       }).toList() as List<Transaction>;
 
   //       return _transactionsSearchResult;
   //     } else if (DateTime.tryParse(query) != null) {
-  //       _transactionsSearchResult = _transactionsList
+  //       _transactionsSearchResult = searchList
   //           .where((transaction) =>
   //               transaction.inbound_at.contains(DateTime.parse(query)))
   //           .toList() as List<Transaction>;
   //       return _transactionsSearchResult;
   //     } else {
-  //       _transactionsSearchResult = _transactionsList.where((transaction) {
+  //       _transactionsSearchResult = searchList.where((transaction) {
   //         transaction as Transaction;
   //         return transaction.type!.toLowerCase().contains(query.toLowerCase());
   //       }).toList() as List<Transaction>;

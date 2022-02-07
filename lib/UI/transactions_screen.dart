@@ -3,16 +3,14 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/argument/transaction_details_args.dart';
 import 'package:warehouse_management/UI/widgets/custom_fab_widget.dart';
+import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
 import 'package:warehouse_management/UI/widgets/filters_dialog.dart';
 import 'package:warehouse_management/UI/widgets/in_out_bound_dialog.dart';
 import 'package:warehouse_management/UI/widgets/transaction_card_widget.dart';
-import 'package:warehouse_management/extensions/get_item_by_id.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
-
-import 'widgets/search_widget.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({Key? key}) : super(key: key);
@@ -26,9 +24,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   Widget build(BuildContext context) {
     TransactionProvider transactionProvider =
         Provider.of<TransactionProvider>(context);
-    ItemProvider itemProvider = Provider.of<ItemProvider>(context);
     context.watch<TransactionProvider>().getTransactions();
-
     context.watch<ItemProvider>().getItems();
 
     final controller = FloatingSearchBarController();
@@ -45,58 +41,62 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       super.dispose();
     }
 
-    buildResultList(transactions) {
-      return transactionProvider.filters.isEmpty
-          ? ListView.builder(
-              itemCount: transactions.transactionList.length,
-              itemBuilder: (context, index) {
-                int itemId = transactions.transactionList[index].itemId;
-                Item item = itemProvider.itemList.getItemById(itemId);
-                return InkWell(
-                  onTap: () => Navigator.pushNamed(
-                      context, '/transactionDetails',
-                      arguments: TransactionsDetailsArgument(
-                          transactions.transactionList[index], item)),
-                  child: TransactionCardWidget(
-                    transaction: transactions.transactionList[index],
-                    item: item,
-                    index: index,
-                  ),
-                );
+    buildResultList(transactionProvider, itemProvider) {
+      List<Transaction>? listOfTransactions =
+          transactionProvider.filters.isEmpty
+              ? transactionProvider.transactionList
+              : transactionProvider.transactionOperationList;
+      return ListView.builder(
+        itemCount: listOfTransactions!.length,
+        itemBuilder: (context, index) {
+          int? itemId = listOfTransactions[index].itemId;
+          List<Item> items = itemProvider.itemList as List<Item>;
+          Item item = items.firstWhere((element) => element.id == itemId);
+
+          return InkWell(
+            onTap: () => Navigator.pushNamed(context, '/transactionDetails',
+                arguments: TransactionsDetailsArgument(
+                    listOfTransactions[index], item)),
+            child: Dismissible(
+              key: Key(listOfTransactions[index].id!.toString()),
+              background: Container(
+                color: Colors.red,
+                child: const Icon(Icons.delete),
+              ),
+              onDismissed: (direction) async {
+                transactionProvider.deleteTransaction(index);
+                await showToastMessage(
+                    "Item at index $index has been Deleted!");
               },
-            )
-          : ListView.builder(
-              itemCount: transactions.transactionsFilters.length,
-              itemBuilder: (context, index) {
-                int itemId = transactions.transactionsFilters[index].itemId;
-                Item item = itemProvider.itemList.getItemById(itemId);
-                return InkWell(
-                  onTap: () => Navigator.pushNamed(
-                      context, '/transactionDetails',
-                      arguments: TransactionsDetailsArgument(
-                          transactions.transactionsFilters[index], item)),
-                  child: TransactionCardWidget(
-                    transaction: transactions.transactionsFilters[index],
-                    item: item,
-                    index: index,
-                  ),
-                );
-              },
-            );
+              child: TransactionCardWidget(
+                transaction: listOfTransactions[index],
+                item: item,
+                index: index,
+              ),
+            ),
+          );
+        },
+      );
     }
 
-    buildSearchList(List<Transaction> transactions) {
+    buildSearchList(List<Transaction> transactions, itemProvider) {
       return ListView.builder(
         itemCount: transactions.length,
         itemBuilder: (context, index) {
-          int? itemId = transactions[index].itemId;
-          Item item = itemProvider.itemList.getItemById(itemId!);
+          Transaction transaction = transactions[index];
+          int? itemId = transaction.itemId;
+          Item item = itemProvider.itemList.firstWhere((element) {
+            element as Item;
+            return element.id == itemId;
+          });
+          
+
           return InkWell(
             onTap: () => Navigator.pushNamed(context, '/transactionDetails',
                 arguments:
                     TransactionsDetailsArgument(transactions[index], item)),
             child: TransactionCardWidget(
-              transaction: transactions[index],
+              transaction: transaction,
               item: item,
               index: index,
             ),
@@ -105,7 +105,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       );
     }
 
-    Widget buildSearchBar() {
+    Widget buildSearchBar(transactionProvider) {
       final actions = [
         FloatingSearchBarAction(
           child: CircularButton(
@@ -113,15 +113,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             onPressed: () async {
               List<int> newFilters = await filtersDialog(context) ?? [];
               transactionProvider.setFilters(newFilters);
-              print(newFilters);
             },
           ),
         ),
         FloatingSearchBarAction.searchToClear(),
       ];
 
-      return Consumer<TransactionProvider>(
-        builder: (context, model, _) => FloatingSearchBar(
+      return Consumer2<TransactionProvider, ItemProvider>(
+        builder: (context, transaction, item, _) => FloatingSearchBar(
           controller: controller,
           hint: 'Search for something',
           iconColor: Colors.grey,
@@ -132,13 +131,22 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           openAxisAlignment: 0.0,
           actions: actions,
           debounceDelay: const Duration(milliseconds: 500),
-          onQueryChanged: model.searchTransaction,
+          onQueryChanged: transaction.searchForTransaction,
           scrollPadding: EdgeInsets.zero,
           transition: CircularFloatingSearchBarTransition(spacing: 16),
           isScrollControlled: true,
           builder: (context, _) =>
-              buildSearchList(model.transactionsSearchResult),
-          body: model.transactionList.isEmpty
+              transaction.transactionList.isEmpty || item.itemList.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No Transactions',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )
+                  : buildSearchList(
+                      transaction.transactionOperationList as List<Transaction>,
+                      item),
+          body: transaction.transactionList.isEmpty || item.itemList.isEmpty
               ? const Center(
                   child: Text(
                     'No Transactions',
@@ -150,7 +158,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     Expanded(
                         child: Padding(
                       padding: EdgeInsets.only(top: 60),
-                      child: buildResultList(model),
+                      child: buildResultList(transaction, item),
                     )),
                   ],
                 ),
@@ -194,7 +202,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
           // Other Sliver Widgets
         ),
-        body: buildSearchBar(),
+        body: buildSearchBar(transactions),
       );
     });
   }
