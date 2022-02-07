@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/image_pick_bottom_sheet.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
+import 'package:warehouse_management/providers/image_picker_provider.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 
 Future showInputDialog(context) {
   final itemProvider = Provider.of<ItemProvider>(context, listen: false);
+  final imagePickerProvider = Provider.of<ImagePickerProvider>(context, listen: false);
+  File? image;
   TextEditingController idController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
@@ -24,8 +30,26 @@ Future showInputDialog(context) {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
+                    InkWell(
+                      onTap: () async {
+                        imagePickBottomSheet(context);
+                        
+                        setState(() {
+                         image = imagePickerProvider.chosenImage;
+                        });
+                      },
+                      child: CircleAvatar(
+                        backgroundImage: image != null
+                            ? Image.file(image!).image
+                            : const AssetImage("assets/placeholder.png"),
+                        radius: 50,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     TextFormField(
-                      inputFormatters: [ FilteringTextInputFormatter.allow(RegExp(r"\d"))],
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r"\d"))
+                      ],
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value!.isNotEmpty && int.tryParse(value) == null) {
@@ -47,8 +71,11 @@ Future showInputDialog(context) {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
-                       inputFormatters: [ FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]"))],
+                    
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -69,6 +96,9 @@ Future showInputDialog(context) {
                         ),
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -92,6 +122,9 @@ Future showInputDialog(context) {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
@@ -114,6 +147,9 @@ Future showInputDialog(context) {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
@@ -129,19 +165,6 @@ Future showInputDialog(context) {
                       maxLines: 1,
                       decoration: InputDecoration(
                         hintText: "Item Description",
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    TextFormField(
-                      controller: imageController,
-                      autofocus: true,
-                      maxLines: 1,
-                      decoration: InputDecoration(
-                        hintText: "Item Image",
                         border: OutlineInputBorder(
                           borderSide: const BorderSide(),
                           borderRadius: BorderRadius.circular(10.0),
@@ -171,7 +194,8 @@ Future showInputDialog(context) {
                       price: priceController.text,
                       sku: skuController.text,
                       description: descriptionController.text,
-                      image: imageController.text);
+                    
+                      image: image != null ? image!.path : null);
                   Navigator.pop(context);
                   itemProvider.addOrUpdateItem(addedItem);
                   showToastMessage('Item added to inventory manually');

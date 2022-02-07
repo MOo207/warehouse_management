@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 

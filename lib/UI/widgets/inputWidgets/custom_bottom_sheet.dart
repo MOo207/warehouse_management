@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse_management/UI/widgets/custom_add_item_dialog.dart';
-import 'package:warehouse_management/UI/widgets/qr_scanner_widget.dart';
+import 'package:warehouse_management/UI/widgets/inputWidgets/custom_add_item_dialog.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/qr_scanner_widget.dart';
 
 openModalBottomSheet(BuildContext context) async {
   await showModalBottomSheet(

@@ -47,7 +47,6 @@ class _CustomDropDownState extends State<CustomDropDown> {
       type: SelectFormFieldType.dialog,
       controller: _controller,
       //initialValue: _initialValue,
-      icon: const Icon(Icons.inventory),
       labelText: 'Item',
       changeIcon: true,
       dialogTitle: 'Pick an item',

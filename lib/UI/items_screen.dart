@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse_management/UI/widgets/custom_bottom_sheet.dart';
-import 'package:warehouse_management/UI/widgets/custom_fab_widget.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
-import 'package:warehouse_management/UI/widgets/item_card_widget.dart';
+import 'package:warehouse_management/UI/widgets/inputWidgets/custom_bottom_sheet.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/custom_fab_widget.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/item_card_widget.dart';
+import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
@@ -15,7 +16,8 @@ class ItemsScreen extends StatelessWidget {
     context.watch<ItemProvider>().getItems();
     final double width = MediaQuery.of(context).size.width;
 
-    return Consumer<ItemProvider>(builder: (context, items, child) {
+    return Consumer2<ItemProvider, TransactionProvider>(
+        builder: (context, items, transactions, child) {
       return WillPopScope(
         onWillPop: () async {
           Navigator.pop(context);
@@ -55,8 +57,12 @@ class ItemsScreen extends StatelessWidget {
                               child: const Icon(Icons.delete),
                             ),
                             onDismissed: (direction) async {
-                              await items.deleteItemWithItsTransactions(index);
-                              // transactionProvider.getTransactions();
+                             for (var i = 0; i < transactions.transactionList.length; i++) {
+                                if (transactions.transactionList[i].itemId == items.itemList[index]!.id) {
+                                  await transactions.deleteTransaction(i, transactions.transactionList[i]);
+                                } 
+                              }
+                              await items.deleteItem(index);
                               await showToastMessage(
                                   "Item at index $index has been Deleted!");
                             },

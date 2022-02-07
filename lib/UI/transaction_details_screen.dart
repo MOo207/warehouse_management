@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
@@ -29,15 +31,26 @@ class TransactionDetailsScreen extends StatelessWidget {
                     Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
+                        borderRadius: const BorderRadius.all(
                           Radius.circular(20.0),
                         ),
                       ),
-                      child: FadeInImage.assetNetwork(
+                      child: Image(
                         height: 100,
                         width: 100,
-                        placeholder: "assets/loading.gif",
-                        image: 'https://picsum.photos/100?image=9',
+                        fit: BoxFit.cover,
+                        image: item!.image! == null || item!.image!.isEmpty? const AssetImage("assets/placeholder.png")  :FileImage(File(item!.image!)) as ImageProvider,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(width: width * 0.08),

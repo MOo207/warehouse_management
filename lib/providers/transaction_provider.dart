@@ -24,8 +24,10 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTransaction(int index) async {
-    _transactionsList.removeAt(index);
+  deleteTransaction(int index, Transaction transaction) async {
+    _transactionsList.remove(transaction);
+    // delete item from operation list also
+    transactionOperationList.remove(transaction);
     await transactionService.deleteTransaction(index);
     notifyListeners();
   }
@@ -50,7 +52,7 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getTransactionsWithFilters(List<int> filters) async {
+  transactionsWithFilter(List<int> filters) async {
     if (filters.isNotEmpty) {
       _transactionsOperationList = _transactionsList;
       switch (filters[0]) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
 import 'package:warehouse_management/extensions/index_by_id_extension.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/services/item_service.dart';
@@ -50,12 +50,6 @@ class ItemProvider with ChangeNotifier {
   deleteItem(int index) {
     itemList.removeAt(index);
     itemService.deleteItem(index);
-    notifyListeners();
-  }
-
-  deleteItemWithItsTransactions(int index) async {
-    itemList.removeAt(index);
-    await itemService.deleteItemWithItsTransactions(index);
     notifyListeners();
   }
 }

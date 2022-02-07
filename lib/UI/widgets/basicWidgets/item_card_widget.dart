@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
-import 'package:warehouse_management/models/items/item_model.dart';
-import 'package:warehouse_management/providers/item_provider.dart';
-import 'package:warehouse_management/providers/transaction_provider.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:warehouse_management/models/items/item_model.dart';
 
 class ItemCardWidget extends StatelessWidget {
   final Item? item;
@@ -13,8 +10,6 @@ class ItemCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ItemProvider itemProvider = Provider.of<ItemProvider>(context);
-    TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context);
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
@@ -31,11 +26,23 @@ class ItemCardWidget extends StatelessWidget {
               ),
             ),
             // child: Image.network("https://picsum.photos/100?image=11")),
-            child: FadeInImage.assetNetwork(
+            child: Image(
               height: 100,
               width: 100,
-              placeholder: "assets/loading.gif",
-              image: 'https://picsum.photos/100?image=9',
+              image: item!.image== null || item!.image!.isEmpty
+                  ? AssetImage("assets/placeholder.png")
+                  : FileImage(File(item!.image!)) as ImageProvider,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
             ),
           ),
           Expanded(

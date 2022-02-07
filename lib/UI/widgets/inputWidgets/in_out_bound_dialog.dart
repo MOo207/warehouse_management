@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:warehouse_management/UI/widgets/custom_dropdown_widget.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_dropdown_widget.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
@@ -68,6 +68,9 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: ((value) {
@@ -93,11 +96,18 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                     SizedBox(
+                      height: 10,
+                    ),
+
                     CustomDropDown(
                       items: itemsToPass,
                       onChange: (changed) => setState(() {
                         itemId = int.parse(changed);
                       }),
+                    ),
+                     SizedBox(
+                      height: 10,
                     ),
                     TextFormField(
                       autofocus: true,
@@ -111,6 +121,9 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         ),
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                     SizedBox(
+                      height: 10,
                     ),
                     DateTimePicker(
                       initialValue: '',
@@ -129,6 +142,10 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         }
                       },
                     ),
+                     SizedBox(
+                      height: 10,
+                    ),
+                    
                     DateTimePicker(
                       initialValue: '',
                       type: DateTimePickerType.dateTime,

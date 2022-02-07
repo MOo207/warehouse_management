@@ -5,6 +5,7 @@ import 'package:warehouse_management/UI/argument/transaction_details_args.dart';
 import 'package:warehouse_management/UI/transactions_screen.dart';
 import 'package:warehouse_management/UI/items_screen.dart';
 import 'package:warehouse_management/UI/transaction_details_screen.dart';
+import 'package:warehouse_management/providers/image_picker_provider.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
 import 'package:warehouse_management/services/hive_service.dart';
@@ -18,6 +19,9 @@ void main() async {
     ),
     ChangeNotifierProvider<TransactionProvider>(
       create: (context) => TransactionProvider(),
+    ),
+    ChangeNotifierProvider<ImagePickerProvider>(
+      create: (context) => ImagePickerProvider(),
     ),
   ], child: const MyApp()));
 }

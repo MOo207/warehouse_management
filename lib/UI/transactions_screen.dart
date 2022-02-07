@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/argument/transaction_details_args.dart';
-import 'package:warehouse_management/UI/widgets/custom_fab_widget.dart';
-import 'package:warehouse_management/UI/widgets/custom_toast_message.dart';
-import 'package:warehouse_management/UI/widgets/filters_dialog.dart';
-import 'package:warehouse_management/UI/widgets/in_out_bound_dialog.dart';
-import 'package:warehouse_management/UI/widgets/transaction_card_widget.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/custom_fab_widget.dart';
+import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
+import 'package:warehouse_management/UI/widgets/inputWidgets/filters_dialog.dart';
+import 'package:warehouse_management/UI/widgets/inputWidgets/in_out_bound_dialog.dart';
+import 'package:warehouse_management/UI/widgets/basicWidgets/transaction_card_widget.dart';
 import 'package:warehouse_management/models/items/item_model.dart';
 import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
@@ -31,7 +31,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     context
         .watch<TransactionProvider>()
-        .getTransactionsWithFilters(transactionProvider.filters);
+        .transactionsWithFilter(transactionProvider.filters);
 
     @override
     void dispose() {
@@ -46,37 +46,52 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           transactionProvider.filters.isEmpty
               ? transactionProvider.transactionList
               : transactionProvider.transactionOperationList;
-      return ListView.builder(
-        itemCount: listOfTransactions!.length,
-        itemBuilder: (context, index) {
-          int? itemId = listOfTransactions[index].itemId;
-          List<Item> items = itemProvider.itemList as List<Item>;
-          Item item = items.firstWhere((element) => element.id == itemId);
+      return transactionProvider.transactionList.isEmpty ||
+              itemProvider.itemList.isEmpty
+          ? Container(
+              child: const Center(
+                child: Text(
+                  'No Transactions Found',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: listOfTransactions!.length,
+              itemBuilder: (context, index) {
+                Transaction transaction = listOfTransactions[index];
+                int? itemId = transaction.itemId;
+                List<Item> items = itemProvider.itemList as List<Item>;
+                Item item = items.firstWhere((element) => element.id == itemId);
 
-          return InkWell(
-            onTap: () => Navigator.pushNamed(context, '/transactionDetails',
-                arguments: TransactionsDetailsArgument(
-                    listOfTransactions[index], item)),
-            child: Dismissible(
-              key: Key(listOfTransactions[index].id!.toString()),
-              background: Container(
-                color: Colors.red,
-                child: const Icon(Icons.delete),
-              ),
-              onDismissed: (direction) async {
-                transactionProvider.deleteTransaction(index);
-                await showToastMessage(
-                    "Item at index $index has been Deleted!");
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(
+                      context, '/transactionDetails',
+                      arguments:
+                          TransactionsDetailsArgument(transaction, item)),
+                  child: Dismissible(
+                    key: Key(listOfTransactions[index].id!.toString()),
+                    background: Container(
+                      color: Colors.red,
+                      child: const Icon(Icons.delete),
+                    ),
+                    onDismissed: (direction) async {
+                      transactionProvider.deleteTransaction(index, transaction);
+                      await showToastMessage(
+                          "Item at index $index has been Deleted!");
+                    },
+                    child: TransactionCardWidget(
+                      transaction: listOfTransactions[index],
+                      item: item,
+                      index: index,
+                    ),
+                  ),
+                );
               },
-              child: TransactionCardWidget(
-                transaction: listOfTransactions[index],
-                item: item,
-                index: index,
-              ),
-            ),
-          );
-        },
-      );
+            );
     }
 
     buildSearchList(List<Transaction> transactions, itemProvider) {
@@ -89,7 +104,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             element as Item;
             return element.id == itemId;
           });
-          
 
           return InkWell(
             onTap: () => Navigator.pushNamed(context, '/transactionDetails',
@@ -157,7 +171,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   children: [
                     Expanded(
                         child: Padding(
-                      padding: EdgeInsets.only(top: 60),
+                      padding: const EdgeInsets.only(top: 60),
                       child: buildResultList(transaction, item),
                     )),
                   ],

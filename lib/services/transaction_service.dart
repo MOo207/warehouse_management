@@ -70,73 +70,37 @@ class TransactionService {
     }
   }
 
-  // List<int> _filters = <int>[];
-  // void setFilters(List<int> newFilters) {
-  //   _filters = newFilters;
-  // }
+  // List<Transaction> transactionsWithFilter(List<int> filters,
+  //     List<Transaction> sourceList, List<Transaction> resultList) {
+  //   resultList = sourceList;
+  //   switch (filters[0]) {
+  //     case 0:
+  //       resultList.sort((a, b) => a.quantity!.compareTo(b.quantity!));
+  //       break;
+  //     case 1:
+  //       resultList.sort((b, a) => a.quantity!.compareTo(b.quantity!));
+  //       break;
 
-  // searchForTransaction(String? query) {
-  //   if (query!.isEmpty) {
-  //     getTransactions();
-  //     _transactionsSearchResult = searchList as List<Transaction>;
-  //     return _transactionsSearchResult;
-  //   } else {
-  //     if (int.tryParse(query) != null) {
-  //       _transactionsSearchResult = searchList.where((transaction) {
-  //         transaction as Transaction;
-  //         return transaction.quantity.toString().contains(query);
-  //       }).toList() as List<Transaction>;
+  //     case 2:
+  //       resultList.sort((a, b) => a.type!.compareTo(b.type!));
+  //       break;
 
-  //       return _transactionsSearchResult;
-  //     } else if (DateTime.tryParse(query) != null) {
-  //       _transactionsSearchResult = searchList
-  //           .where((transaction) =>
-  //               transaction.inbound_at.contains(DateTime.parse(query)))
-  //           .toList() as List<Transaction>;
-  //       return _transactionsSearchResult;
-  //     } else {
-  //       _transactionsSearchResult = searchList.where((transaction) {
-  //         transaction as Transaction;
-  //         return transaction.type!.toLowerCase().contains(query.toLowerCase());
-  //       }).toList() as List<Transaction>;
-  //       return _transactionsSearchResult;
-  //     }
+  //     case 3:
+  //       resultList.sort((b, a) => a.type!.compareTo(b.type!));
+  //       break;
+
+  //     case 4:
+  //       resultList.sort((a, b) => a.inbound_at!.compareTo(b.inbound_at!));
+  //       break;
+
+  //     case 5:
+  //       resultList.sort((a, b) => a.outbound_at!.compareTo(b.outbound_at!));
+  //       break;
+
+  //     default:
   //   }
-  // }
-
-  // getTransactionsWithFilters(List<int> filters) async {
-  //   final box = await openTransactionsBox();
-  //   if (filters.isNotEmpty) {
-  //     _transactionsFilters = box.values.toList();
-
-  //     switch (filters[0]) {
-  //       case 0:
-  //         _transactionsFilters
-  //             .sort((a, b) => a.quantity!.compareTo(b.quantity!));
-  //         break;
-  //       case 1:
-  //         _transactionsFilters
-  //             .sort((b, a) => a.quantity!.compareTo(b.quantity!));
-  //         break;
-  //       case 2:
-  //         _transactionsFilters.sort((a, b) => a.type!.compareTo(b.type!));
-  //         break;
-  //       case 3:
-  //         _transactionsFilters.sort((b, a) => a.type!.compareTo(b.type!));
-  //         break;
-  //       case 4:
-  //         _transactionsFilters
-  //             .sort((a, b) => a.inbound_at!.compareTo(b.inbound_at!));
-  //         break;
-  //       case 5:
-  //         _transactionsFilters
-  //             .sort((a, b) => a.outbound_at!.compareTo(b.outbound_at!));
-  //         break;
-  //       default:
-  //     }
-  //   } else {
-  //     _transactionsFilters = box.values.toList();
-  //   }
+  //   print(resultList);
+  //   return resultList;
   // }
 
   // addOrUpdateTransaction(Transaction transaction) async {
