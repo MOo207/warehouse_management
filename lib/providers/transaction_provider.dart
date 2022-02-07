@@ -9,6 +9,10 @@ class TransactionProvider with ChangeNotifier {
 
   List get transactionList => _transactionsList;
 
+  List _transactionsOperationList = <Transaction>[];
+
+  List get transactionOperationList => _transactionsOperationList;
+
   getTransactions() async {
     final list = await transactionService.getTransactions();
     _transactionsList = list;
@@ -21,10 +25,8 @@ class TransactionProvider with ChangeNotifier {
   }
 
   deleteTransaction(int index) async {
+    _transactionsList.removeAt(index);
     await transactionService.deleteTransaction(index);
-
-    _transactionsList = await transactionService.getTransactions();
-
     notifyListeners();
   }
 
@@ -36,37 +38,11 @@ class TransactionProvider with ChangeNotifier {
 
   List<int> get filters => _filters;
 
-  List<Transaction> _transactionsSearchResult = <Transaction>[];
-
-  List<Transaction> get transactionsSearchResult => _transactionsSearchResult;
-
-  searchTransaction(String? query) {
-    if (query!.isEmpty) {
-      getTransactions();
-      _transactionsSearchResult = _transactionsList as List<Transaction>;
-      return _transactionsSearchResult;
-    } else {
-      if (int.tryParse(query) != null) {
-        _transactionsSearchResult = _transactionsList.where((transaction) {
-          transaction as Transaction;
-          return transaction.quantity.toString().contains(query);
-        }).toList() as List<Transaction>;
-
-        return _transactionsSearchResult;
-      } else if (DateTime.tryParse(query) != null) {
-        _transactionsSearchResult = _transactionsList
-            .where((transaction) =>
-                transaction.inbound_at.contains(DateTime.parse(query)))
-            .toList() as List<Transaction>;
-        return _transactionsSearchResult;
-      } else {
-        _transactionsSearchResult = _transactionsList.where((transaction) {
-          transaction as Transaction;
-          return transaction.type!.toLowerCase().contains(query.toLowerCase());
-        }).toList() as List<Transaction>;
-        return _transactionsSearchResult;
-      }
-    }
+  searchForTransaction(String? query) async {
+    List<Transaction> list = transactionService.searchForTransaction(
+        query, _transactionsList as List<Transaction>);
+    _transactionsOperationList = list;
+    notifyListeners();
   }
 
   addTransaction(Transaction transaction) async {
@@ -74,47 +50,37 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<Transaction> _transactionsFilters = <Transaction>[];
-
-  List<Transaction> get transactionsFilters => _transactionsFilters;
-
   getTransactionsWithFilters(List<int> filters) async {
-    final box = await transactionService.getTransactions();
-    _transactionsList = box;
-
     if (filters.isNotEmpty) {
-      _transactionsFilters = box;
-
+      _transactionsOperationList = _transactionsList;
       switch (filters[0]) {
         case 0:
-          _transactionsFilters
+          _transactionsOperationList
               .sort((a, b) => a.quantity!.compareTo(b.quantity!));
           break;
         case 1:
-          _transactionsFilters
+          _transactionsOperationList
               .sort((b, a) => a.quantity!.compareTo(b.quantity!));
           break;
         case 2:
-          _transactionsFilters.sort((a, b) => a.type!.compareTo(b.type!));
+          _transactionsOperationList.sort((a, b) => a.type!.compareTo(b.type!));
           break;
         case 3:
-          _transactionsFilters.sort((b, a) => a.type!.compareTo(b.type!));
+          _transactionsOperationList.sort((b, a) => a.type!.compareTo(b.type!));
           break;
         case 4:
-          _transactionsFilters
+          _transactionsOperationList
               .sort((a, b) => a.inbound_at!.compareTo(b.inbound_at!));
           break;
         case 5:
-          _transactionsFilters
+          _transactionsOperationList
               .sort((a, b) => a.outbound_at!.compareTo(b.outbound_at!));
           break;
         default:
       }
-
-      notifyListeners();
+      return _transactionsOperationList;
     } else {
-      _transactionsFilters = box;
-      notifyListeners();
+      return _transactionsList;
     }
   }
 
