@@ -47,7 +47,7 @@ class TransactionCardWidget extends StatelessWidget {
                   height: 10.0,
                 ),
                 Text(
-                  item!.price != null ? item!.price!  + " SR" : "price"  + " SR",
+                  item!.price != null ? item!.price!  + " SR" : "price SR",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

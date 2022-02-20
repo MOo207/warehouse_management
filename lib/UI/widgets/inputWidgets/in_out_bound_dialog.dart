@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/widgets/smallElements/custom_dropdown_widget.dart';
@@ -68,7 +70,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     TextFormField(
@@ -96,7 +98,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                     SizedBox(
+                     const SizedBox(
                       height: 10,
                     ),
 
@@ -106,7 +108,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         itemId = int.parse(changed);
                       }),
                     ),
-                     SizedBox(
+                     const SizedBox(
                       height: 10,
                     ),
                     TextFormField(
@@ -122,7 +124,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                     SizedBox(
+                     const SizedBox(
                       height: 10,
                     ),
                     DateTimePicker(
@@ -142,7 +144,7 @@ Future showInOutBoundForm(context, bool isInBound) async {
                         }
                       },
                     ),
-                     SizedBox(
+                     const SizedBox(
                       height: 10,
                     ),
                     

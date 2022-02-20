@@ -36,7 +36,7 @@ class ImagePickerProvider extends ChangeNotifier {
     // original file path
     final filePath = image.absolute.path;
     // creating output path
-    final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
     final split = filePath.substring(0, (lastIndex));
     final outPath = "${split}_out${filePath.substring(lastIndex)}";
 
@@ -45,9 +45,6 @@ class ImagePickerProvider extends ChangeNotifier {
       outPath,
       quality: 50,
     );
-    print("Original : ${image.lengthSync() / 1024}");
-    print("Compressed: ${result!.lengthSync() / 1024}");
-
     return result;
   }
 }

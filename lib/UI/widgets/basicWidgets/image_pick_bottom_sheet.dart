@@ -18,16 +18,16 @@ void imagePickBottomSheet(context)  async{
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  leading: Icon(Icons.photo_album),
-                  title: Text("Image from Gallery"),
+                  leading: const Icon(Icons.photo_album),
+                  title: const Text("Image from Gallery"),
                   onTap: () {
                     imagePicker.pickImage(ImageSource.gallery);
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_camera),
-                  title: Text("Image from Camera"),
+                  leading: const Icon(Icons.photo_camera),
+                  title: const Text("Image from Camera"),
                   onTap: () {
                     imagePicker.pickImage(ImageSource.camera);
                     Navigator.pop(context);

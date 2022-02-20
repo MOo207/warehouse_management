@@ -31,7 +31,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                     Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: const BoxDecoration(
-                        borderRadius: const BorderRadius.all(
+                        borderRadius: BorderRadius.all(
                           Radius.circular(20.0),
                         ),
                       ),
@@ -39,6 +39,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
+                        // ignore: unnecessary_null_comparison
                         image: item!.image! == null || item!.image!.isEmpty? const AssetImage("assets/placeholder.png")  :FileImage(File(item!.image!)) as ImageProvider,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:select_form_field/select_form_field.dart';
 
@@ -14,7 +16,6 @@ class _CustomDropDownState extends State<CustomDropDown> {
   TextEditingController? _controller;
 
   //String _initialValue;
-  String _valueChanged = '';
   String _valueToValidate = '';
   String _valueSaved = '';
 

@@ -30,7 +30,7 @@ class ItemCardWidget extends StatelessWidget {
               height: 100,
               width: 100,
               image: item!.image== null || item!.image!.isEmpty
-                  ? AssetImage("assets/placeholder.png")
+                  ? const AssetImage("assets/placeholder.png")
                   : FileImage(File(item!.image!)) as ImageProvider,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;

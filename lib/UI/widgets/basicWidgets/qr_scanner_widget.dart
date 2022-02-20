@@ -107,18 +107,20 @@ class _QRScannerState extends State<QRScanner> {
             price: decodedJSON['price'],
             image: decodedJSON['image']);
 
-        Provider.of<ItemProvider>(context, listen: false).addOrUpdateItem(itemToAdd);
+        Provider.of<ItemProvider>(context, listen: false)
+            .addOrUpdateItem(itemToAdd);
 
         controller!.dispose();
         Navigator.pop(context);
         showToastMessage('Item added to inventory using QR');
       } on FormatException catch (e) {
-        print('The provided string is not valid JSON');
+        // print('The provided string is not valid JSON');
+        showToastMessage('The provided string is not valid JSON $e');
       } catch (e) {
-        print(e.toString());
+        showToastMessage('Error: $e');
       }
     } else {
-      print('No scan data available');
+      showToastMessage('no scan data available');
     }
   }
 

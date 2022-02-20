@@ -24,8 +24,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   Widget build(BuildContext context) {
     TransactionProvider transactionProvider =
         Provider.of<TransactionProvider>(context);
-    context.watch<TransactionProvider>().getTransactions();
     context.watch<ItemProvider>().getItems();
+    context.watch<TransactionProvider>().getTransactions();
 
     final controller = FloatingSearchBarController();
 
@@ -34,6 +34,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         .transactionsWithFilter(transactionProvider.filters);
 
     @override
+    // ignore: unused_element
     void dispose() {
       if (!controller.isClosed) {
         controller.dispose();
@@ -48,17 +49,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               : transactionProvider.transactionOperationList;
       return transactionProvider.transactionList.isEmpty ||
               itemProvider.itemList.isEmpty
-          ? Container(
-              child: const Center(
-                child: Text(
-                  'No Transactions Found',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          ? const Center(
+            child: Text(
+              'No Transactions Found',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-            )
+            ),
+          )
           : ListView.builder(
               itemCount: listOfTransactions!.length,
               itemBuilder: (context, index) {

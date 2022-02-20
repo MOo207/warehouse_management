@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,7 +20,6 @@ Future showInputDialog(context) {
   TextEditingController priceController = TextEditingController();
   TextEditingController skuController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
   return showDialog(
       context: context,
       builder: (BuildContext context) {

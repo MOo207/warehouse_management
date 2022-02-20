@@ -3,7 +3,6 @@ import 'package:warehouse_management/UI/widgets/inputWidgets/custom_bottom_sheet
 import 'package:warehouse_management/UI/widgets/basicWidgets/custom_fab_widget.dart';
 import 'package:warehouse_management/UI/widgets/smallElements/custom_toast_message.dart';
 import 'package:warehouse_management/UI/widgets/basicWidgets/item_card_widget.dart';
-import 'package:warehouse_management/models/transactions/transaction_model.dart';
 import 'package:warehouse_management/providers/item_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/providers/transaction_provider.dart';
@@ -13,7 +12,6 @@ class ItemsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ItemProvider>().getItems();
     final double width = MediaQuery.of(context).size.width;
 
     return Consumer2<ItemProvider, TransactionProvider>(
