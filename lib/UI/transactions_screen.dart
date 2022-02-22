@@ -210,11 +210,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             'Transactions',
           ),
           actions: [
-            IconButton(
-                onPressed: () => Navigator.pushNamed(context, '/items'),
-                icon: const Icon(
-                  Icons.add_circle,
-                )),
+           InkWell(
+             onTap: () => Navigator.pushNamed(context, '/items'),
+             child: Image.asset("assets/addItem.png",
+                 width: 30, height: 30, color: Colors.black),
+           )
           ],
 
           // Other Sliver Widgets
