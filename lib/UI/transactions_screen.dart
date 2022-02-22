@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:warehouse_management/UI/argument/transaction_details_args.dart';
@@ -50,14 +51,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       return transactionProvider.transactionList.isEmpty ||
               itemProvider.itemList.isEmpty
           ? const Center(
-            child: Text(
-              'No Transactions Found',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              child: Text(
+                'No Transactions Found',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          )
+            )
           : ListView.builder(
               itemCount: listOfTransactions!.length,
               itemBuilder: (context, index) {
@@ -137,9 +138,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       return Consumer2<TransactionProvider, ItemProvider>(
         builder: (context, transaction, item, _) => FloatingSearchBar(
           controller: controller,
-          leadingActions: [
-             FloatingSearchBarAction.back()
-          ],
+          leadingActions: [FloatingSearchBarAction.back()],
           hint: 'Search for something',
           transitionDuration: const Duration(milliseconds: 800),
           transitionCurve: Curves.easeInOutCubic,
@@ -210,11 +209,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             'Transactions',
           ),
           actions: [
-           InkWell(
-             onTap: () => Navigator.pushNamed(context, '/items'),
-             child: Image.asset("assets/addItem.png",
-                 width: 30, height: 30, color: Colors.black),
-           )
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, '/items'),
+              child: SvgPicture.asset(
+                "assets/addItem.svg",
+                width: 30,
+                height: 30,
+                color: Colors.black,
+              ),
+            ),
           ],
 
           // Other Sliver Widgets
