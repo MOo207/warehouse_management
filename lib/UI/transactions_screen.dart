@@ -129,6 +129,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               transactionProvider.setFilters(newFilters);
             },
           ),
+          showIfOpened: true,
         ),
         FloatingSearchBarAction.searchToClear(
           showIfClosed: true,
