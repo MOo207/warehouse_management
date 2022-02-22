@@ -129,14 +129,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             },
           ),
         ),
-        FloatingSearchBarAction.searchToClear(),
+        FloatingSearchBarAction.searchToClear(
+          showIfClosed: true,
+        ),
       ];
 
       return Consumer2<TransactionProvider, ItemProvider>(
         builder: (context, transaction, item, _) => FloatingSearchBar(
           controller: controller,
+          leadingActions: [
+             FloatingSearchBarAction.back()
+          ],
           hint: 'Search for something',
-          iconColor: Colors.grey,
           transitionDuration: const Duration(milliseconds: 800),
           transitionCurve: Curves.easeInOutCubic,
           physics: const BouncingScrollPhysics(),
